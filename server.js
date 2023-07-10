@@ -23,42 +23,9 @@ const PORT = process.env.PORT || 8080;
 
 const server = http.createServer((req, res) => {
     const urlObj = new URL(req.url, `http://${req.headers.host}`);
-    const extension = path.extname(req.url);
 
-    let contenType, filePath;
-
-    switch (extension) {
-        case '.css':
-            contenType = 'text/css';
-            break;
-        case '.js':
-        case '.mjs':
-            contenType = 'text/javascript';
-            break;
-        case '.txt':
-            contenType = 'text/plain';
-        case '.jpg':
-        case '.jpeg':
-            contenType = 'image/jpg';
-            break;
-        case '.png':
-            contenType = 'image/png';
-            break;
-        case '.json':
-            contenType = 'application/json';
-            break;
-        default:
-            contenType = 'text/html';
-    }
-
-    res.setHeader('Content-type', contenType);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-
-    if (contenType === 'text/html') {
-        if (urlObj.pathname === '/') filePath = path.join(__dirname, 'build', 'index.html');
-        else filePath = path.join(__dirname, 'build', urlObj.pathname);
-    }
-    else filePath = path.join(__dirname, 'build', urlObj.pathname);
+  res.setHeader("Content-type", "application/json");
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
     switch (urlObj.pathname) {
         case '/summoner':
@@ -114,16 +81,9 @@ const server = http.createServer((req, res) => {
                 });
             break;
         default:
-            fs.readFile(filePath, (err, data) => {
-                if (err) {
-                    res.writeHead(500);
-                    res.end();
-                    throw err;
-                }
-
-                res.end(data);
-            });
-    }
+      res.writeHead(404);
+      res.end();
+  }
 });
 
 server.listen(PORT, () => console.log(`Server opened on port ${PORT}...`));
